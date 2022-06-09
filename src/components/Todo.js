@@ -26,6 +26,7 @@ function Todo() {
     { key: getKey(), text: '明日の準備をする', done: false },
     /* テストコード 終了 */
   ]);
+  const [filter, setFilter] = useState("ALL");
   const add=text=>{
   putItems([...items, { key: getKey(), text, done: false }]);
 };
@@ -38,12 +39,31 @@ const handleCheck = (checked) => {
     });
     putItems(newItems);
   };
+   const displayItems = items.filter((item) => {
+    if (filter === "ALL") return true;
+    if (filter === "TODO") return !item.done;
+    if (filter === "DONE") return item.done;
+  });
+  const add = (text) => {
+    putItems([...items, { key: getKey(), text, done: false }]);
+  };
+  const handleCheck = (checked) => {
+    const newItems = items.map((item) => {
+      if (item.key === checked.key) {
+        item.done = !item.done;
+      }
+      return item;
+    });
+    putItems(newItems);
+  };
+  const handleFilterChange = (value) => setFilter(value);
   return (
     <div className="panel">
       <div className="panel-heading">
         ITSS ToDoアプリ
       </div>
       <Input addItem={add}/>
+      <Filter onChange={handleFilterChange} value={filter} />
       {items.map(item => (
         <TodoItem key={item.key}
        item={item} onCheck={handleCheck}
